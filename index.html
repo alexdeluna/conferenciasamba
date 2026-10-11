@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101b2d">
+  <meta name="description" content="Controle de devoluções e acerto financeiro com fornecedor.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="visual.css">
+  <title>Acerto • Samba Nigth</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">SN</div>
+      <div class="brand-copy"><strong>Acerto</strong><span>Samba Nigth · Fornecedor</span></div>
+      <div class="offline-pill"><span class="status-dot"></span><span id="connectionText">Local</span></div>
+    </header>
+
+    <main id="appMain">
+      <section class="view active" id="view-home">
+        <div class="eyebrow">PAINEL DO EVENTO</div>
+        <h1>Vamos fechar<br>esse acerto.</h1>
+        <p class="muted intro">Confira as devoluções e veja quanto falta pagar ao fornecedor.</p>
+        <div class="hero-card">
+          <div class="hero-top"><span>ESTIMATIVA A PAGAR</span><span class="hero-icon">↗</span></div>
+          <div class="hero-value" id="homePayable">R$ 2.209,14</div>
+          <div class="hero-caption" id="homePayableCaption">Nenhuma devolução registrada</div>
+          <div class="hero-divider"></div>
+          <div class="hero-stats">
+            <div><span>Produtos ativos</span><strong id="homeProductCount">11</strong></div>
+            <div><span>Unidades recebidas</span><strong id="homeUnits">482</strong></div>
+          </div>
+        </div>
+        <button class="primary-btn full" data-go="settlement"><span class="btn-icon">＋</span> Iniciar conferência <span class="arrow">→</span></button>
+        <div class="section-heading"><h2>Acesso rápido</h2></div>
+        <div class="quick-grid">
+          <button class="quick-card" data-go="products"><span class="quick-icon teal">▦</span><strong>Produtos</strong><small>Editar preços e quantidades</small><span class="quick-arrow">↗</span></button>
+          <button class="quick-card" data-go="history"><span class="quick-icon amber">◷</span><strong>Histórico</strong><small>Acertos finalizados</small><span class="quick-arrow">↗</span></button>
+        </div>
+        <div class="note-card"><span class="note-symbol">i</span><p><strong>Seus dados ficam neste dispositivo.</strong><br>O app funciona offline. Faça uma exportação de segurança para guardar uma cópia dos registros.</p></div>
+      </section>
+
+      <section class="view" id="view-settlement">
+        <div class="view-heading">
+          <div><div class="eyebrow">CONFERÊNCIA DE ESTOQUE</div><h1>Devoluções</h1></div>
+          <button class="icon-btn" id="resetReturns" title="Zerar devoluções" aria-label="Zerar devoluções">↺</button>
+        </div>
+        <p class="muted intro">Informe quantas unidades foram devolvidas. O saldo é recalculado automaticamente.</p>
+        <div class="settlement-summary">
+          <div><span>VALOR A PAGAR</span><strong id="settlementPayable">R$ 2.209,14</strong></div>
+          <div class="summary-mini"><span id="returnedUnits">0 devolvidas</span><span id="remainingUnits">482 não devolvidas</span></div>
+          <div class="progress-track"><span id="returnProgress"></span></div>
+        </div>
+        <label class="search-box"><span>⌕</span><input id="productSearch" type="search" placeholder="Buscar produto..." autocomplete="off"><kbd>⌘ K</kbd></label>
+        <div class="filter-row">
+          <button class="filter-chip active" data-filter="all">Todos</button>
+          <button class="filter-chip" data-filter="pending">A conferir</button>
+          <button class="filter-chip" data-filter="returned">Com devolução</button>
+        </div>
+        <div id="settlementProducts" class="product-stack"></div>
+        <div class="sticky-action">
+          <div><span>Total do acerto</span><strong id="stickyPayable">R$ 2.209,14</strong></div>
+          <button class="primary-btn" id="finishSettlement">Conferir e finalizar →</button>
+        </div>
+      </section>
+
+      <section class="view" id="view-products">
+        <div class="view-heading">
+          <div><div class="eyebrow">CADASTRO</div><h1>Produtos</h1></div>
+          <button class="primary-btn compact" id="addProductBtn">＋ Novo</button>
+        </div>
+        <p class="muted intro">Altere preços e quantidades quando precisar. Os acertos já finalizados preservam os valores originais.</p>
+        <label class="search-box"><span>⌕</span><input id="manageSearch" type="search" placeholder="Buscar produto..." autocomplete="off"></label>
+        <div class="product-count-row"><span id="manageCount">11 produtos</span><span>Ordenados por nome</span></div>
+        <div id="manageProducts" class="product-stack"></div>
+        <div class="bottom-space"></div>
+      </section>
+
+      <section class="view" id="view-history">
+        <div class="view-heading"><div><div class="eyebrow">REGISTROS</div><h1>Histórico</h1></div><button class="icon-btn" id="exportData" title="Exportar backup" aria-label="Exportar backup">⇩</button></div>
+        <p class="muted intro">Cada acerto finalizado guarda uma cópia dos preços e quantidades daquele momento.</p>
+        <div class="history-summary"><span>ACERTOS SALVOS</span><strong id="historyCount">0</strong></div>
+        <div id="historyList" class="history-stack"></div>
+        <div class="backup-card"><div class="backup-icon">⇩</div><div><strong>Backup dos dados</strong><p>Exporte produtos e histórico para um arquivo JSON.</p></div><button class="secondary-btn" id="exportData2">Exportar</button></div>
+        <label class="import-label">Restaurar backup JSON<input id="importData" type="file" accept="application/json,.json" hidden></label>
+        <div class="bottom-space"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" data-go="home"><span class="nav-icon">⌂</span><span>Início</span></button>
+      <button class="nav-item" data-go="settlement"><span class="nav-icon">▤</span><span>Acerto</span></button>
+      <button class="nav-item" data-go="products"><span class="nav-icon">▦</span><span>Produtos</span></button>
+      <button class="nav-item" data-go="history"><span class="nav-icon">◷</span><span>Histórico</span></button>
+    </nav>
+  </div>
+
+  <dialog id="productDialog" class="modal">
+    <form id="productForm" method="dialog">
+      <div class="modal-head"><div><div class="eyebrow">CADASTRO DE PRODUTO</div><h2 id="productDialogTitle">Novo produto</h2></div><button type="button" class="icon-btn" data-close="productDialog" aria-label="Fechar">×</button></div>
+      <input type="hidden" id="productId">
+      <label class="field-label">Nome do produto<input id="productName" required maxlength="80" placeholder="Ex.: Cerveja Original"></label>
+      <div class="form-grid">
+        <label class="field-label">Quantidade recebida<input id="productQuantity" type="number" required min="0" step="1" inputmode="numeric" placeholder="0"></label>
+        <label class="field-label">Valor unitário (R$)<input id="productPrice" required inputmode="decimal" placeholder="0,00"></label>
+      </div>
+      <label class="toggle-row"><span><strong>Produto ativo</strong><small>Produtos inativos não aparecem no próximo acerto.</small></span><input type="checkbox" id="productActive" checked></label>
+      <p class="form-hint">Editar o produto não altera acertos que já foram finalizados.</p>
+      <div class="modal-actions"><button type="button" class="secondary-btn" data-close="productDialog">Cancelar</button><button type="submit" class="primary-btn">Salvar produto</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="finishDialog" class="modal">
+    <form id="finishForm" method="dialog">
+      <div class="modal-head"><div><div class="eyebrow">REVISÃO FINAL</div><h2>Confirmar acerto</h2></div><button type="button" class="icon-btn" data-close="finishDialog" aria-label="Fechar">×</button></div>
+      <div class="finish-total"><span>VALOR A PAGAR AO FORNECEDOR</span><strong id="finishPayable">R$ 0,00</strong><small id="finishSubline">Saldo após as devoluções</small></div>
+      <div id="finishBreakdown" class="finish-breakdown"></div>
+      <label class="field-label">Observação (opcional)<textarea id="settlementNote" rows="2" maxlength="300" placeholder="Ex.: acerto conferido com o fornecedor"></textarea></label>
+      <p class="form-hint">Ao finalizar, os valores serão congelados neste registro. Esta ação não altera os produtos cadastrados.</p>
+      <div class="modal-actions"><button type="button" class="secondary-btn" data-close="finishDialog">Voltar</button><button type="submit" class="primary-btn">Salvar acerto</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="detailDialog" class="modal">
+    <div class="modal-head"><div><div class="eyebrow">REGISTRO SALVO</div><h2 id="detailTitle">Detalhes do acerto</h2></div><button type="button" class="icon-btn" data-close="detailDialog" aria-label="Fechar">×</button></div>
+    <div id="detailContent"></div>
+    <div class="modal-actions"><button type="button" class="secondary-btn" data-close="detailDialog">Fechar</button><button type="button" class="primary-btn" id="exportReceipt">Exportar resumo</button></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
